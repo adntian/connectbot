@@ -676,4 +676,16 @@
 	<string name="notification_requirement_explanation">Notification permission is required to display running sessions in the background</string>
 	<string name="continue_anyway">Continue without</string>
 	<string name="allow">Allow</string>
+
+	<string name="hostpref_reconnect_attempts_title">重连次数</string>
+	<string name="hostpref_reconnect_interval_title">重连间隔</string>
+	<string name="hostpref_reconnect_interval_unit">秒</string>
+	<string name="hostpref_reconnect_attempts_hint">设置自动重连的最大尝试次数</string>
+	<string name="hostpref_reconnect_interval_hint">设置每次重连的间隔时间（秒）</string>
+	<string name="hostpref_reconnect_invalid">请输入有效的重连次数和间隔</string>
+	<string name="hostpref_autoconnect_title">启动App时自动连接</string>
+	<string name="hostpref_autoconnect_summary">打开App时自动连接此主机（可设置延时）</string>
+	<string name="hostpref_autoconnect_delay_hint">自动连接延时（秒）</string>
+	<string name="hostpref_autoconnect_enabled">已启用自动连接</string>
+	<string name="hostpref_autoconnect_disabled">未启用自动连接</string>
 </resources>

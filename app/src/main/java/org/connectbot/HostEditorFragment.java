@@ -127,6 +127,10 @@ public class HostEditorFragment extends Fragment {
 	private CheckableMenuItem mCloseOnDisconnectSwitch;
 	private EditText mPostLoginAutomationField;
 	private HostTextFieldWatcher mFontSizeTextChangeListener;
+	private View mReconnectOptionsContainer;
+	private EditText mReconnectAttemptsField;
+	private EditText mReconnectIntervalField;
+	private CheckableMenuItem mAutoConnectSwitch;
 
 	public static HostEditorFragment newInstance(
 			HostBean existingHost, ArrayList<String> pubkeyNames, ArrayList<String> pubkeyValues) {
@@ -459,6 +463,7 @@ public class HostEditorFragment extends Fragment {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mHost.setStayConnected(isChecked);
+				mReconnectOptionsContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
 				handleHostChange();
 			}
 		});
@@ -477,6 +482,26 @@ public class HostEditorFragment extends Fragment {
 		mPostLoginAutomationField.setText(mHost.getPostLogin());
 		mPostLoginAutomationField.addTextChangedListener(
 				new HostTextFieldWatcher(HostDatabase.FIELD_HOST_POSTLOGIN));
+
+		mReconnectOptionsContainer = view.findViewById(R.id.reconnect_options_container);
+		mReconnectAttemptsField = view.findViewById(R.id.reconnect_attempts_field);
+		mReconnectIntervalField = view.findViewById(R.id.reconnect_interval_field);
+		mAutoConnectSwitch = view.findViewById(R.id.auto_connect_item);
+
+		mReconnectAttemptsField.setText(Integer.toString(mHost.getReconnectAttempts()));
+		mReconnectIntervalField.setText(Integer.toString(mHost.getReconnectIntervalSeconds()));
+		mReconnectOptionsContainer.setVisibility(mHost.getStayConnected() ? View.VISIBLE : View.GONE);
+		mAutoConnectSwitch.setChecked(mHost.isAutoConnectOnAppStart());
+
+		mReconnectAttemptsField.addTextChangedListener(new HostTextFieldWatcher(HostDatabase.FIELD_HOST_RECONNECTATTEMPTS));
+		mReconnectIntervalField.addTextChangedListener(new HostTextFieldWatcher(HostDatabase.FIELD_HOST_RECONNECTINTERVALSECONDS));
+		mAutoConnectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mHost.setAutoConnectOnAppStart(isChecked);
+				handleHostChange();
+			}
+		});
 
 		setUriPartsContainerExpanded(mIsUriEditorExpanded);
 
@@ -686,8 +711,6 @@ public class HostEditorFragment extends Fragment {
 			mListener.onHostInvalidated();
 			return;
 		}
-
-		// Now, the host is confirmed to have a valid URI.
 		mListener.onValidHostConfigured(mHost);
 	}
 
@@ -735,6 +758,16 @@ public class HostEditorFragment extends Fragment {
 				} catch (NumberFormatException ignored) {
 				} finally {
 					setFontSize(fontSize);
+				}
+			} else if (HostDatabase.FIELD_HOST_RECONNECTATTEMPTS.equals(mFieldType)) {
+				try {
+					mHost.setReconnectAttempts(Integer.parseInt(text));
+				} catch (NumberFormatException ignored) {
+				}
+			} else if (HostDatabase.FIELD_HOST_RECONNECTINTERVALSECONDS.equals(mFieldType)) {
+				try {
+					mHost.setReconnectIntervalSeconds(Integer.parseInt(text));
+				} catch (NumberFormatException ignored) {
 				}
 			} else {
 				throw new RuntimeException("Invalid field type.");

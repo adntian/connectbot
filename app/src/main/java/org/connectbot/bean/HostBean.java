@@ -56,6 +56,9 @@ public class HostBean extends AbstractBean {
 	private String encoding = HostDatabase.ENCODING_DEFAULT;
 	private boolean stayConnected = false;
 	private boolean quickDisconnect = false;
+	private int reconnectAttempts = 3;
+	private int reconnectIntervalSeconds = 5;
+	private boolean autoConnectOnAppStart = false;
 
 	public HostBean() {
 
@@ -198,6 +201,30 @@ public class HostBean extends AbstractBean {
 		return quickDisconnect;
 	}
 
+	public void setReconnectAttempts(int attempts) {
+		this.reconnectAttempts = attempts;
+	}
+
+	public int getReconnectAttempts() {
+		return reconnectAttempts;
+	}
+
+	public void setReconnectIntervalSeconds(int interval) {
+		this.reconnectIntervalSeconds = interval;
+	}
+
+	public int getReconnectIntervalSeconds() {
+		return reconnectIntervalSeconds;
+	}
+
+	public void setAutoConnectOnAppStart(boolean autoConnect) {
+		this.autoConnectOnAppStart = autoConnect;
+	}
+
+	public boolean isAutoConnectOnAppStart() {
+		return autoConnectOnAppStart;
+	}
+
 	@SuppressLint("DefaultLocale")
 	public String getDescription() {
 		String description = String.format("%s@%s", username, hostname);
@@ -230,6 +257,9 @@ public class HostBean extends AbstractBean {
 		values.put(HostDatabase.FIELD_HOST_ENCODING, encoding);
 		values.put(HostDatabase.FIELD_HOST_STAYCONNECTED, Boolean.toString(stayConnected));
 		values.put(HostDatabase.FIELD_HOST_QUICKDISCONNECT, Boolean.toString(quickDisconnect));
+		values.put(HostDatabase.FIELD_HOST_RECONNECTATTEMPTS, reconnectAttempts);
+		values.put(HostDatabase.FIELD_HOST_RECONNECTINTERVALSECONDS, reconnectIntervalSeconds);
+		values.put(HostDatabase.FIELD_HOST_AUTOCONNECTONAPPSTART, Boolean.toString(autoConnectOnAppStart));
 
 		return values;
 	}
@@ -254,6 +284,9 @@ public class HostBean extends AbstractBean {
 		host.setEncoding(values.getAsString(HostDatabase.FIELD_HOST_ENCODING));
 		host.setStayConnected(values.getAsBoolean(HostDatabase.FIELD_HOST_STAYCONNECTED));
 		host.setQuickDisconnect(values.getAsBoolean(HostDatabase.FIELD_HOST_QUICKDISCONNECT));
+		host.setReconnectAttempts(values.getAsInteger(HostDatabase.FIELD_HOST_RECONNECTATTEMPTS));
+		host.setReconnectIntervalSeconds(values.getAsInteger(HostDatabase.FIELD_HOST_RECONNECTINTERVALSECONDS));
+		host.setAutoConnectOnAppStart(values.getAsBoolean(HostDatabase.FIELD_HOST_AUTOCONNECTONAPPSTART));
 		return host;
 	}
 

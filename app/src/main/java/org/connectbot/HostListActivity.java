@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -97,6 +98,8 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 	 */
 	private boolean closeOnDisconnectAll = true;
 
+	private static boolean sAutoConnectTriggered = false;
+
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -129,6 +132,25 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 		this.bindService(new Intent(this, TerminalManager.class), connection, Context.BIND_AUTO_CREATE);
 
 		hostdb = HostDatabase.get(this);
+
+		// 自动连接功能，只在冷启动时触发一次
+		if (!sAutoConnectTriggered) {
+			sAutoConnectTriggered = true;
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					List<HostBean> autoConnectHosts = hostdb.getHosts(false);
+					if (autoConnectHosts != null && bound != null) {
+						for (HostBean host : autoConnectHosts) {
+							if (host.isAutoConnectOnAppStart()) {
+								Uri uri = host.getUri();
+								startConsoleActivity(uri);
+							}
+						}
+					}
+				}
+			}, 1000);
+		}
 	}
 
 	@Override

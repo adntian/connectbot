@@ -125,6 +125,9 @@ public class TerminalBridge implements VDUDisplay {
 
 	private BridgeDisconnectedListener disconnectListener = null;
 
+	private int reconnectAttempted = 0;
+	private boolean manualDisconnect = false;
+
 	/**
 	 * Create a new terminal bridge suitable for unit testing.
 	 */
@@ -450,13 +453,11 @@ public class TerminalBridge implements VDUDisplay {
 		synchronized (this) {
 			if (disconnected && !immediate)
 				return;
-
 			disconnected = true;
 		}
-
+		manualDisconnect = immediate;
 		// Cancel any pending prompts.
 		promptHelper.cancelPrompt();
-
 		// disconnection request hangs if we havent really connected to a host yet
 		// temporary fix is to just spawn disconnection into a thread
 		Thread disconnectThread = new Thread(new Runnable() {
@@ -468,18 +469,25 @@ public class TerminalBridge implements VDUDisplay {
 		});
 		disconnectThread.setName("Disconnect");
 		disconnectThread.start();
-
 		if (immediate || (host.getQuickDisconnect() && !host.getStayConnected())) {
 			awaitingClose = true;
 			triggerDisconnectListener();
 		} else {
-			{
-				final String line = manager.res.getString(R.string.alert_disconnect_msg);
-				((vt320) buffer).putString("\r\n" + line + "\r\n");
-			}
-			if (host.getStayConnected()) {
-				manager.requestReconnect(this);
-				return;
+			final String line = manager.res.getString(R.string.alert_disconnect_msg);
+			((vt320) buffer).putString("\r\n" + line + "\r\n");
+			if (host.getStayConnected() && !manualDisconnect) {
+				if (reconnectAttempted < host.getReconnectAttempts()) {
+					reconnectAttempted++;
+					new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							manager.requestReconnect(TerminalBridge.this);
+						}
+					}, host.getReconnectIntervalSeconds() * 1000);
+					return;
+				} else {
+					reconnectAttempted = 0;
+				}
 			}
 			Thread disconnectPromptThread = new Thread(new Runnable() {
 				@Override

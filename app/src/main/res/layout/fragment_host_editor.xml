@@ -457,6 +457,61 @@
 			app:summary="@string/hostpref_stayconnected_summary"
 			/>
 
+		<LinearLayout
+			android:id="@+id/reconnect_options_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginLeft="68dp"
+			android:layout_marginStart="68dp"
+			android:layout_marginRight="48dp"
+			android:layout_marginEnd="48dp"
+			android:visibility="gone"
+			android:animateLayoutChanges="true"
+		>
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/reconnect_attempts_field_container"
+				android:layout_width="0dp"
+				android:layout_weight="1"
+				android:layout_height="wrap_content"
+				android:labelFor="@+id/reconnect_attempts_field"
+			>
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/reconnect_attempts_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/hostpref_reconnect_attempts_title"
+					android:inputType="number"
+					android:maxLines="1"
+				/>
+			</com.google.android.material.textfield.TextInputLayout>
+			<com.google.android.material.textfield.TextInputLayout
+				android:id="@+id/reconnect_interval_field_container"
+				android:layout_width="0dp"
+				android:layout_weight="1"
+				android:layout_height="wrap_content"
+				android:labelFor="@+id/reconnect_interval_field"
+			>
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/reconnect_interval_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/hostpref_reconnect_interval_title"
+					android:inputType="number"
+					android:maxLines="1"
+				/>
+			</com.google.android.material.textfield.TextInputLayout>
+			<TextView
+				android:id="@+id/reconnect_interval_unit"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:text="@string/hostpref_reconnect_interval_unit"
+				android:paddingLeft="4dp"
+				android:paddingRight="8dp"
+			/>
+		</LinearLayout>
+
 		<org.connectbot.views.CheckableMenuItem
 			android:id="@+id/close_on_disconnect_item"
 			android:layout_width="match_parent"
@@ -465,6 +520,15 @@
 			android:title="@string/hostpref_quickdisconnect_title"
 			app:summary="@string/hostpref_quickdisconnect_summary"
 			/>
+
+		<org.connectbot.views.CheckableMenuItem
+			android:id="@+id/auto_connect_item"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:icon="@drawable/ic_auto_connect"
+			android:title="@string/hostpref_autoconnect_title"
+			app:summary="@string/hostpref_autoconnect_summary"
+		/>
 
 		<RelativeLayout
 			android:id="@+id/postlogin_item"

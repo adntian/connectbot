@@ -73,6 +73,9 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 	public final static String FIELD_HOST_ENCODING = "encoding";
 	public final static String FIELD_HOST_STAYCONNECTED = "stayconnected";
 	public final static String FIELD_HOST_QUICKDISCONNECT = "quickdisconnect";
+	public final static String FIELD_HOST_RECONNECTATTEMPTS = "reconnectattempts";
+	public final static String FIELD_HOST_RECONNECTINTERVALSECONDS = "reconnectintervalseconds";
+	public final static String FIELD_HOST_AUTOCONNECTONAPPSTART = "autoconnectonappstart";
 
 	public final static String TABLE_KNOWNHOSTS = "knownhosts";
 	public final static String FIELD_KNOWNHOSTS_HOSTID = "hostid";
@@ -142,7 +145,10 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			+ FIELD_HOST_COMPRESSION + " TEXT DEFAULT '" + false + "', "
 			+ FIELD_HOST_ENCODING + " TEXT DEFAULT '" + ENCODING_DEFAULT + "', "
 			+ FIELD_HOST_STAYCONNECTED + " TEXT DEFAULT '" + false + "', "
-			+ FIELD_HOST_QUICKDISCONNECT + " TEXT DEFAULT '" + false + "'";
+			+ FIELD_HOST_QUICKDISCONNECT + " TEXT DEFAULT '" + false + "', "
+			+ FIELD_HOST_RECONNECTATTEMPTS + " INTEGER DEFAULT 3, "
+			+ FIELD_HOST_RECONNECTINTERVALSECONDS + " INTEGER DEFAULT 5, "
+			+ FIELD_HOST_AUTOCONNECTONAPPSTART + " TEXT DEFAULT '" + false + "'";
 
 	public static final String CREATE_TABLE_HOSTS = "CREATE TABLE " + TABLE_HOSTS
 			+ " (" + TABLE_HOSTS_COLUMNS + ")";
@@ -392,6 +398,9 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 					+ FIELD_HOST_COMPRESSION + ", "
 					+ FIELD_HOST_ENCODING + ", "
 					+ FIELD_HOST_STAYCONNECTED + ", "
+					+ FIELD_HOST_RECONNECTATTEMPTS + ", "
+					+ FIELD_HOST_RECONNECTINTERVALSECONDS + ", "
+					+ FIELD_HOST_AUTOCONNECTONAPPSTART + ", "
 					+ FIELD_HOST_QUICKDISCONNECT
 					+ " FROM " + TABLE_HOSTS);
 			db.execSQL("DROP TABLE " + TABLE_HOSTS);
@@ -506,7 +515,10 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			COL_COMPRESSION = c.getColumnIndexOrThrow(FIELD_HOST_COMPRESSION),
 			COL_ENCODING = c.getColumnIndexOrThrow(FIELD_HOST_ENCODING),
 			COL_STAYCONNECTED = c.getColumnIndexOrThrow(FIELD_HOST_STAYCONNECTED),
-			COL_QUICKDISCONNECT = c.getColumnIndexOrThrow(FIELD_HOST_QUICKDISCONNECT);
+			COL_QUICKDISCONNECT = c.getColumnIndexOrThrow(FIELD_HOST_QUICKDISCONNECT),
+			COL_RECONNECTATTEMPTS = c.getColumnIndexOrThrow(FIELD_HOST_RECONNECTATTEMPTS),
+			COL_RECONNECTINTERVALSECONDS = c.getColumnIndexOrThrow(FIELD_HOST_RECONNECTINTERVALSECONDS),
+			COL_AUTOCONNECTONAPPSTART = c.getColumnIndexOrThrow(FIELD_HOST_AUTOCONNECTONAPPSTART);
 
 		while (c.moveToNext()) {
 			HostBean host = new HostBean();
@@ -530,6 +542,9 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			host.setEncoding(c.getString(COL_ENCODING));
 			host.setStayConnected(Boolean.parseBoolean(c.getString(COL_STAYCONNECTED)));
 			host.setQuickDisconnect(Boolean.parseBoolean(c.getString(COL_QUICKDISCONNECT)));
+			host.setReconnectAttempts(c.getInt(COL_RECONNECTATTEMPTS));
+			host.setReconnectIntervalSeconds(c.getInt(COL_RECONNECTINTERVALSECONDS));
+			host.setAutoConnectOnAppStart(Boolean.parseBoolean(c.getString(COL_AUTOCONNECTONAPPSTART)));
 
 			hosts.add(host);
 		}
