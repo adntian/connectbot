@@ -60,7 +60,7 @@ jobs:
           script: ./gradlew connectedCheck --continue
 
       - name: Prepare release
-        if: ${{ github.event_name == 'push' }}
+        # if: ${{ github.event_name == 'push' }}
         run: |
           if git describe --exact-match; then \
             TAGGED=yes
@@ -83,7 +83,7 @@ jobs:
           cp ./app/build/outputs/native-debug-symbols/ossRelease/native-debug-symbols.zip ConnectBot-${GITHUB_TAG}-oss.native-debug-symbols.zip
   
       - name: Store artifacts for upload
-        if: ${{ github.event_name == 'push' }}
+        # if: ${{ github.event_name == 'push' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apk
