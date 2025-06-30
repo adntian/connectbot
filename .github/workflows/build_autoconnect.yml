@@ -62,7 +62,7 @@ jobs:
       - name: Prepare release
         # if: ${{ github.event_name == 'push' }}
         run: |
-          if git describe --exact-match; then \
+          if git describe --tags; then \
             TAGGED=yes
           fi
 
