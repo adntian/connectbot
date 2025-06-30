@@ -97,7 +97,8 @@ jobs:
   sign-and-release:
     name: Sign and Release
     needs: build
-    if: ${{ (github.event_name == 'push') && (github.repository == 'adntian/connectbot') && ((github.ref == 'refs/heads/autoconnect') || startsWith(github.ref, 'refs/tags/v')) }}
+    if: ${{ (github.repository == 'adntian/connectbot') && ((github.ref == 'refs/heads/autoconnect') || startsWith(github.ref, 'refs/tags/v')) }}
+    # if: ${{ (github.event_name == 'push') && (github.repository == 'adntian/connectbot') && ((github.ref == 'refs/heads/autoconnect') || startsWith(github.ref, 'refs/tags/v')) }}
     runs-on: ubuntu-latest
 
     permissions:
