@@ -144,6 +144,9 @@ jobs:
             SIGNED_APK="$2"
             echo "尝试使用 apksigner 签名: $UNSIGNED_APK"
             set +e
+            # zipalign
+            $ANDROID_HOME/build-tools/$LATEST_BUILD_TOOLS/zipalign -v 4 "$UNSIGNED_APK" "aligned.apk"
+            mv "aligned.apk" "$UNSIGNED_APK"
             $ANDROID_HOME/build-tools/$LATEST_BUILD_TOOLS/apksigner sign \
               --ks keystore.jks \
               --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
@@ -166,9 +169,7 @@ jobs:
                 "$UNSIGNED_APK" "${{ secrets.KEY_ALIAS }}"
               jarsigner -verify -verbose "$SIGNED_APK"
             fi
-            # zipalign
-            $ANDROID_HOME/build-tools/$LATEST_BUILD_TOOLS/zipalign -v 4 "$SIGNED_APK" "aligned.apk"
-            mv "aligned.apk" "$SIGNED_APK"
+            
           }
           
           # 签名 Google APK
